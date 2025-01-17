@@ -6,6 +6,8 @@ Download the zip file of JBoss EAP 7.4.0 (`jboss-eap-7.4.0.zip`) from [this link
 
 In the `compose.yaml` file, you can set the Liferay version by changing the value of `LR_IMAGE_TAG`.
 
+Copy your license into `liferay-jboss-docker/override_files/liferay/deploy` folder.
+
 To run the environment from the `liferay-jboss-docker` folder, run the following command:
 
     docker compose up --build
