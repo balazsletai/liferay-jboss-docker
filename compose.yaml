@@ -1,0 +1,106 @@
+# ===========================================================
+
+# Use LR_IMAGE_TAG to specify the Liferay image tag to use.
+# The default value is 2024.q4.2.
+# This will override the default in the Dockerfile.
+
+# ===========================================================
+
+services:
+  database:
+    container_name: mysql-database
+    image: mysql:8.0
+    command: |
+      mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci --lower_case_table_names=1 --log-error-verbosity=1
+    environment:
+      MYSQL_DATABASE: lportal
+      MYSQL_ROOT_PASSWORD: Liferay123
+    ports:
+      - 127.0.0.1:3306:3306
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+    user: mysql
+    volumes:
+      - ./container_files/mysql:/var/lib/mysql
+    networks:
+      - lr-network
+    healthcheck:
+      interval: 20s
+      retries: 10
+      test: "([ -d \"/var/lib/mysql/lportal\" ])"
+      start_period: 50s
+  liferay:
+    build:
+      context: ./build
+      args:
+        # ==================================================
+        # Set the Liferay version here.
+        # ==================================================
+        LR_IMAGE_TAG: '2024.q4.2'
+        JBOSS_EAP_ZIP_FILE_PATH: './files/jboss/jboss-eap-7.4.0.zip'
+    environment:
+      - JAVA_FONTS=/usr/share/fonts
+      - LIFERAY_JPDA_ENABLED=true
+      - LIFERAY_SETUP_PERIOD_DATABASE_PERIOD_JAR_PERIOD_NAME_OPENBRACKET_COM_PERIOD_MYSQL_PERIOD_CJ_PERIOD_JDBC_PERIOD__UPPERCASED_RIVER_CLOSEBRACKET_=mysql.jar
+      - LIFERAY_JVM_OPTS="-Xms5g -Xmx5g -Dsun.awt.fontconfig=/etc/fonts/fonts.conf"
+      - LIFERAY_SETUP_PERIOD_DATABASE_PERIOD_JAR_PERIOD_SHA_NUMBER1__OPENBRACKET_COM_PERIOD_MYSQL_PERIOD_CJ_PERIOD_JDBC_PERIOD__UPPERCASED_RIVER_CLOSEBRACKET_=41ec3f8cdaccf6c46a47d7cd628eeb59a926d9d4
+      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD=Liferay123
+      - LIFERAY_DISABLE_TRIAL_LICENSE=true
+      - LIFERAY_SETUP_PERIOD_DATABASE_PERIOD_JAR_PERIOD_URL_OPENBRACKET_COM_PERIOD_MYSQL_PERIOD_CJ_PERIOD_JDBC_PERIOD__UPPERCASED_RIVER_CLOSEBRACKET_=https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.32/mysql-connector-j-8.0.32.jar
+      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=com.mysql.cj.jdbc.Driver
+      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://database:3306/lportal?characterEncoding=UTF-8&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&useSSL=false
+      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=root
+      - LIFERAY_SEARCH_PERIOD_ELASTICSEARCH_PERIOD_CONFIGURATION_PERIOD_OPERATION_MODE=REMOTE
+      - LIFERAY_SEARCH_PERIOD_ELASTICSEARCH_PERIOD_CONFIGURATION_PERIOD_REST_PERIOD_ENABLED=true
+      - LIFERAY_SEARCH_PERIOD_ELASTICSEARCH_PERIOD_CONFIGURATION_PERIOD_REST_PERIOD_CONNECTIONS=[{"connectionId":"default","networkHostAddresses":"elasticsearch-remote:9200"}]
+    networks:
+      - lr-network
+    ports:
+      - 8000:8000
+      - 8080:8080
+      - 9990:9990
+    volumes:
+      - ./container_files/liferay/data:/opt/liferay/data
+      - ./override_files/liferay:/mnt/liferay
+    healthcheck:
+      interval: 5s
+      retries: 60
+      test: curl -fsS http://localhost:8080/c/portal/layout || exit 1
+      timeout: 5s
+      start_period: 120s
+    depends_on:
+      database:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+  elasticsearch:
+    container_name: elasticsearch-remote
+    build: elastic
+    mem_limit: 4g
+    environment:
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - cluster.name=liferay_cluster
+      - discovery.type=single-node
+      - xpack.ml.enabled=false
+      - xpack.monitoring.enabled=false
+      - xpack.security.enabled=false
+      - xpack.sql.enabled=false
+      - xpack.watcher.enabled=false
+    networks:
+      - lr-network
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - ./elastic/data/:/usr/share/elasticsearch/data/
+    healthcheck:
+      interval: 10s
+      retries: 10
+      test: curl localhost:9200/_cat/health | grep green
+      timeout: 5s
+networks:
+  lr-network:
+    driver: bridge
