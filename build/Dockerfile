@@ -138,7 +138,7 @@ fi
 
 # Configuring standalone.xml
 RUN TMP_CONFIG_PATH="${JBOSS_HOME}/standalone/configuration/standalone.xml" && \
-sed -i 's/<jsp-config\/>/<jsp-config development="true" source-vm="21" target-vm="21" \/>/' "${TMP_CONFIG_PATH}" && \
+    sed -i 's/<jsp-config\/>/<jsp-config development="true" source-vm="21" target-vm="21" \/>/' "${TMP_CONFIG_PATH}" && \
     sed -i '/<\/extensions>/a \
         <system-properties>\n\
             <property name="org.apache.catalina.connector.URI_ENCODING" value="UTF-8" \/>\n\
