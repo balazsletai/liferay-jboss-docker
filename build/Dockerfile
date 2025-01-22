@@ -1,7 +1,7 @@
 # ==============================================================================================================
 
 # This Dockerfile is used to build a Docker image for Liferay DXP with JBoss EAP.
-# By default this Dockerfile uses Liferay DXP 2024.Q4.2 and Red Hat UBI 7.9 images and Java 21.
+# By default this Dockerfile uses Liferay DXP 2024.Q4.2, Red Hat UBI 7.9 images and Java 21.
 # In order to change the Java version. 
 # Search for 'zulu21-jdk' and change 21. e.g. for Java 17, use zulu17-jdk.
 # Search for 'source-vm=' and 'target-vm='. Change the values to the desired Java version.
@@ -61,7 +61,6 @@ ENV LIFERAY_MOUNT_DIR="/mnt/liferay"
 
 # Copy Liferay bundle files + Liferay scripts to JBoss
 COPY --from=liferay /opt/liferay/osgi ${LIFERAY_HOME}/osgi
-COPY --from=liferay /opt/liferay/tomcat/webapps/ROOT/WEB-INF/shielded-container-lib ${JBOSS_HOME}/modules/com/liferay/portal/main
 COPY --from=liferay /opt/liferay/tomcat/webapps/ROOT ${JBOSS_HOME}/standalone/deployments/ROOT.war
 COPY --from=liferay /usr/local/bin/*.sh /usr/local/bin/
 
@@ -114,27 +113,6 @@ RUN if [ -d "${JBOSS_HOME}/standalone/deployments/ROOT.war/WEB-INF/shielded-cont
         fi && \
         unset TMP_MYSQL_JAR_LINK; \
     fi
-
-# Configuring module.xml
-RUN if [ -d "${JBOSS_HOME}/modules/com/liferay/portal/main" ]; then \
-    TMP_MODULE_DIR_PATH="${JBOSS_HOME}/modules/com/liferay/portal/main" && \
-    echo -e '<?xml version="1.0"?>' >> "${TMP_MODULE_DIR_PATH}/module.xml" && \
-    echo -e '<module xmlns="urn:jboss:module:1.0" name="com.liferay.portal">' >> "${TMP_MODULE_DIR_PATH}/module.xml" && \
-    echo -e '\t<resources>' >> "${TMP_MODULE_DIR_PATH}/module.xml" && \
-    for f in $(find "${TMP_MODULE_DIR_PATH}" -name "*.jar"); do \
-        if [ $(echo $(basename $f) | grep -E "(cccp.jar|com.liferay.*.jar|portlet.jar|portal-kernel.jar|hsql.jar|mariadb.jar|mysql.jar|postgresql.jar)") ]; then \
-            echo -e "\t\t<resource-root path=\"$(basename $f)\" />" >> "${TMP_MODULE_DIR_PATH}/module.xml"; \
-        fi; \
-    done && \
-    echo -e '\t</resources>' >> "${TMP_MODULE_DIR_PATH}/module.xml" && \
-    echo -e '\t<dependencies>' >> "${TMP_MODULE_DIR_PATH}/module.xml" && \
-    for m in "jakarta.api" "jakarta.mail.api" "jakarta.servlet.api" "jakarta.servlet.jsp.api" "jakarta.transaction.api"; do \
-        echo -e "\t\t<module name=\"$m\" />" >> "${TMP_MODULE_DIR_PATH}/module.xml"; \
-    done && \
-    echo -e '\t</dependencies>' >> "${TMP_MODULE_DIR_PATH}/module.xml" && \
-    echo -e '</module>' >> "${TMP_MODULE_DIR_PATH}/module.xml" &&\
-    unset TMP_MODULE_DIR_PATH; \
-fi
 
 # Configuring standalone.xml
 RUN TMP_CONFIG_PATH="${JBOSS_HOME}/standalone/configuration/standalone.xml" && \
