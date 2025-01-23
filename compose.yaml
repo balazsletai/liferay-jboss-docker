@@ -53,9 +53,6 @@ services:
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=com.mysql.cj.jdbc.Driver
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://database:3306/lportal?characterEncoding=UTF-8&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&useSSL=false
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=root
-      - LIFERAY_SEARCH_PERIOD_ELASTICSEARCH_PERIOD_CONFIGURATION_PERIOD_OPERATION_MODE=REMOTE
-      - LIFERAY_SEARCH_PERIOD_ELASTICSEARCH_PERIOD_CONFIGURATION_PERIOD_REST_PERIOD_ENABLED=true
-      - LIFERAY_SEARCH_PERIOD_ELASTICSEARCH_PERIOD_CONFIGURATION_PERIOD_REST_PERIOD_CONNECTIONS=[{"connectionId":"default","networkHostAddresses":"elasticsearch-remote:9200"}]
     networks:
       - lr-network
     ports:
