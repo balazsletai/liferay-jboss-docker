@@ -50,16 +50,20 @@ services:
       - LIFERAY_SETUP_PERIOD_DATABASE_PERIOD_JAR_PERIOD_SHA_NUMBER1__OPENBRACKET_COM_PERIOD_MYSQL_PERIOD_CJ_PERIOD_JDBC_PERIOD__UPPERCASED_RIVER_CLOSEBRACKET_=41ec3f8cdaccf6c46a47d7cd628eeb59a926d9d4
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD=Liferay123
       - LIFERAY_DISABLE_TRIAL_LICENSE=true
+      - LIFERAY_CLUSTER_PERIOD_LINK_PERIOD_AUTODETECT_PERIOD_ADDRESS=database:3306
+      - LIFERAY_CLUSTER_PERIOD_LINK_PERIOD_ENABLED=true
       - LIFERAY_SETUP_PERIOD_DATABASE_PERIOD_JAR_PERIOD_URL_OPENBRACKET_COM_PERIOD_MYSQL_PERIOD_CJ_PERIOD_JDBC_PERIOD__UPPERCASED_RIVER_CLOSEBRACKET_=https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.32/mysql-connector-j-8.0.32.jar
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=com.mysql.cj.jdbc.Driver
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://database:3306/lportal?characterEncoding=UTF-8&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&useSSL=false
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=root
+      - LIFERAY_CLUSTER_PERIOD_LINK_PERIOD_CHANNEL_PERIOD_LOGIC_PERIOD_NAME_PERIOD_CONTROL=control-channel-logic-name-1
+      - LIFERAY_CLUSTER_PERIOD_LINK_PERIOD_CHANNEL_PERIOD_LOGIC_PERIOD_NAME_PERIOD_TRANSPORT_PERIOD_NUMBER0=transport-channel-logic-name-1
     networks:
       - lr-network
     ports:
       - 8000:8000
-      - 8080:8080
-      - 9990:9990
+      - 8081:8080
+      - 9991:9990
     volumes:
       - ./container_files/liferay/data:/opt/liferay/data
       - ./override_files/liferay:/mnt/liferay
@@ -87,21 +91,26 @@ services:
     environment:
       - JAVA_FONTS=/usr/share/fonts
       - LIFERAY_JPDA_ENABLED=true
+      - LIFERAY_DL_PERIOD_STORE_PERIOD_IMPL=com.liferay.portal.store.db.DBStore
       - LIFERAY_SETUP_PERIOD_DATABASE_PERIOD_JAR_PERIOD_NAME_OPENBRACKET_COM_PERIOD_MYSQL_PERIOD_CJ_PERIOD_JDBC_PERIOD__UPPERCASED_RIVER_CLOSEBRACKET_=mysql.jar
       - LIFERAY_JVM_OPTS="-Xms5g -Xmx5g -Dsun.awt.fontconfig=/etc/fonts/fonts.conf"
       - LIFERAY_SETUP_PERIOD_DATABASE_PERIOD_JAR_PERIOD_SHA_NUMBER1__OPENBRACKET_COM_PERIOD_MYSQL_PERIOD_CJ_PERIOD_JDBC_PERIOD__UPPERCASED_RIVER_CLOSEBRACKET_=41ec3f8cdaccf6c46a47d7cd628eeb59a926d9d4
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD=Liferay123
       - LIFERAY_DISABLE_TRIAL_LICENSE=true
+      - LIFERAY_CLUSTER_PERIOD_LINK_PERIOD_AUTODETECT_PERIOD_ADDRESS=database:3306
+      - LIFERAY_CLUSTER_PERIOD_LINK_PERIOD_ENABLED=true
       - LIFERAY_SETUP_PERIOD_DATABASE_PERIOD_JAR_PERIOD_URL_OPENBRACKET_COM_PERIOD_MYSQL_PERIOD_CJ_PERIOD_JDBC_PERIOD__UPPERCASED_RIVER_CLOSEBRACKET_=https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.32/mysql-connector-j-8.0.32.jar
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=com.mysql.cj.jdbc.Driver
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://database:3306/lportal?characterEncoding=UTF-8&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&useSSL=false
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=root
+      - LIFERAY_CLUSTER_PERIOD_LINK_PERIOD_CHANNEL_PERIOD_LOGIC_PERIOD_NAME_PERIOD_CONTROL=control-channel-logic-name-1
+      - LIFERAY_CLUSTER_PERIOD_LINK_PERIOD_CHANNEL_PERIOD_LOGIC_PERIOD_NAME_PERIOD_TRANSPORT_PERIOD_NUMBER0=transport-channel-logic-name-1
     networks:
       - lr-network
     ports:
       - 8001:8000
-      - 8081:8080
-      - 9991:9990
+      - 8082:8080
+      - 9992:9990
     volumes:
       - ./container_files/liferay/data:/opt/liferay/data
       - ./override_files/liferay:/mnt/liferay
