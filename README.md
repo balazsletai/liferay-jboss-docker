@@ -75,6 +75,13 @@ Note: make sure the `default.properties` will remain in the patching-tool folder
 
 Place it in /override_files/liferay/deploy folder.
 
+## Connection to the database
+
+Access: 127.0.0.1:5432
+Database: lportal
+User: liferay
+Password: Liferay123
+
 ## Additional Resources
 
 For more details about compatibility and quarterly releases, visit the official Liferay documentation:
