@@ -67,7 +67,7 @@ The Liferay Docker image is created from the Dockerfile in the `liferay-jboss-do
 
 You can place the hotfix in the `override_files/liferay/patching` folder before starting up the environment.
 
-In case you need to upgrade the patching tool, download the latest from [Downloads page](https://liferay.com), then unzip it and replace the patching-tool in the files folder.
+In case you need to upgrade the patching tool, download the latest from [Downloads page](https://customer.liferay.com/en/downloads), then unzip it and replace the patching-tool in the files folder.
 
 Note: make sure the `default.properties` will remain in the patching-tool folder.
 
@@ -78,7 +78,7 @@ Place it in /override_files/liferay/deploy folder.
 ## Additional Resources
 
 For more details about compatibility and quarterly releases, visit the official Liferay documentation:
-[Quarterly Releases Compatibility Matrix](https://liferay.com)
+[Quarterly Releases Compatibility Matrix](https://support.liferay.com/v/25988346?category=25988282)
 
 ***
 
