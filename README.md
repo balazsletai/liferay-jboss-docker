@@ -1,6 +1,6 @@
 # Liferay DXP with JBoss EAP 8 Docker Image
 
-First clone this repository: `git clone https://github.com`
+First clone this repository: `https://github.com/balazsletai/liferay-jboss-docker`
 
 Download the zip file of JBoss EAP 8.1.0 from Redhat official site or [from my drive](https://drive.google.com/file/d/19-Gys-FYdJrNS8I5OuYogZKr98Gqeoob/view?usp=sharing) and place the zip file in the `liferay-jboss-docker/build/files/jboss` folder.
 
