@@ -1,0 +1,101 @@
+# ===========================================================
+
+# Use LR_IMAGE_TAG to specify the Liferay image tag to use.
+# The default value is 2026.q1.2-lts.
+# This will override the default in the Dockerfile.
+
+# ===========================================================
+
+services:
+  database:
+    container_name: postgres-database
+    image: postgres:17
+    environment:
+      POSTGRES_DB: lportal
+      POSTGRES_USER: liferay
+      POSTGRES_PASSWORD: Liferay123
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      # Use a named volume instead of a relative path
+      - liferay_db_data:/var/lib/postgresql/data
+    networks:
+      - lr-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U liferay -d lportal"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  liferay:
+    build:
+      context: ./build
+      args:
+        # Targeting the 2026 LTS version and JBoss 8
+        LR_IMAGE_TAG: '2026.q1.2-lts'
+        JBOSS_EAP_ZIP_FILE_PATH: './files/jboss/jboss-eap-8.1.0.zip'
+    environment:
+      - JAVA_FONTS=/usr/share/fonts
+      - LIFERAY_JPDA_ENABLED=true
+      - LIFERAY_JVM_OPTS="-Xms5g -Xmx5g -Dsun.awt.fontconfig=/etc/fonts/fonts.conf"
+      - LIFERAY_DISABLE_TRIAL_LICENSE=true
+      
+      # PostgreSQL 17 Connection Configuration
+      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=org.postgresql.Driver
+      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:postgresql://database:5432/lportal
+      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=liferay
+      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD=Liferay123
+      
+    networks:
+      - lr-network
+    ports:
+      - 8000:8000
+      - 8080:8080
+      - 9990:9990
+    volumes:
+      - ./container_files/liferay/data:/opt/liferay/data
+      - ./override_files/liferay:/mnt/liferay
+    healthcheck:
+      interval: 10s
+      retries: 60
+      test: curl -fsS http://localhost:8080/c/portal/layout || exit 1
+      timeout: 5s
+      start_period: 180s
+    depends_on:
+      database:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+
+  elasticsearch:
+    container_name: elasticsearch-remote
+    build:
+      context: ./elastic
+    mem_limit: 4g
+    environment:
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - cluster.name=liferay_cluster
+      - discovery.type=single-node
+      # Disable security to avoid needing SSL certificates for local dev
+      - xpack.security.enabled=false
+    networks:
+      - lr-network
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - ./elastic/data/:/usr/share/elasticsearch/data/
+    healthcheck:
+      # Updated healthcheck for ES 8 compatibility
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cat/health | grep -E 'green|yellow'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+networks:
+  lr-network:
+    driver: bridge
+
+volumes:
+  liferay_db_data:
